@@ -107,7 +107,7 @@ with st.container(border=True):
 
 # Touchpoints Visualisierung
 with st.container(border=True):
-    st.subheader("Touchpoints & Interaktionen"
+    st.subheader("Touchpoints & Interaktionen")
     st.markdown("""
         Die Übersicht der digitalen Touchpoints zeigt, welche Kanäle am meisten genutzt werden 
         und wo Potenzial für mehr Interaktion liegt.
