@@ -77,7 +77,7 @@ col2.metric(
     int((pd.to_datetime("today") - pd.to_datetime(df["last_contact"])).dt.days.mean()),
 )
 col3.metric("Ø Frequency (Tage)", int(df["frequency"].mean()))
-col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(0))
+col4.metric("Ø Umsatz (€)", int(df["monetary"].mean()))
 
 # Customer Lifetime Value
 with st.container(border=True):
