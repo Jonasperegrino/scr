@@ -60,12 +60,12 @@ if logo_path.exists():
     st.image(str(logo_path), width=180)
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.title("SCR Eishockey Fan Dashboard")
+st.title("SC Riessersee Fan Dashboard")
 
 st.markdown(
     f"""
     <span style="color:{SCR_WEISS}; font-size:1.1rem;">
-    Dashboard für einen Eishockey Club um die Daten der Fans in einer Digital Customer Journey zu erfassen und auszuwerten.
+    Dashboard für die Digital Customer Journey der Fans des SC Riessersee.
     </span>
     """,
     unsafe_allow_html=True,
