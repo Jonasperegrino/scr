@@ -1,10 +1,12 @@
-import streamlit as st
+"""Streamlit Dashboard for SC Riessersee Eishockey Fan Engagement"""
+
 import json
-import pandas as pd
+import os
 from collections import Counter
 from pathlib import Path
-import os
 
+import pandas as pd
+import streamlit as st
 
 SCR_DUNKELBLAU = "#202A44"
 SCR_HELLBLAU = "#009FE3"
@@ -12,7 +14,7 @@ SCR_WEISS = "#FFFFFF"
 
 
 def check_password():
-    PASSWORD = os.environ.get("SCR_DASHBOARD_PASSWORD", "")
+    """Function verifying the password."""
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
     if not st.session_state["authenticated"]:
@@ -20,7 +22,7 @@ def check_password():
             pw = st.text_input("Passwort", type="password")
             submitted = st.form_submit_button("Login")
             if submitted:
-                if pw == PASSWORD:
+                if pw == os.environ.get("SCR_DASHBOARD_PASSWORD", ""):
                     st.session_state["authenticated"] = True
                 else:
                     st.error("Falsches Passwort!")
@@ -29,7 +31,6 @@ def check_password():
 
 check_password()
 
-# Set dashboard background and center logo via CSS
 st.markdown(
     f"""
     <style>
@@ -54,51 +55,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Centered logo
 logo_path = Path("sc-riessersee-eishockey-logo.svg")
 if logo_path.exists():
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     st.image(str(logo_path), width=180)
-    st.markdown("</div>", unsafe_allow_html=True)
 
-st.title("SC Riessersee Fan Dashboard")
+st.title("SC Riessersee Eishockey Fan Dashboard")
 
-st.markdown(
-    f"""
-    <span style="color:{SCR_WEISS}; font-size:1.1rem;">
-    Dashboard für die Digital Customer Journey der Fans des SC Riessersee.
-    </span>
-    """,
-    unsafe_allow_html=True,
-)
+st.write("Dashboard für die Digital Customer Journey der Fans des SC Riessersee.")
 
 # Load data
-with open("fans_data.json", "r") as f:
+with open("fans_data.json", "r", encoding="utf-8") as f:
     fans = json.load(f)
 
 df = pd.DataFrame(fans)
-
-# Add custom CSS for chart containers
-st.markdown(
-    """
-    <style>
-    .chart-container {
-        background: #22305a;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .summary-text {
-        color: #fff;
-        font-size: 1.05rem;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 # KPIs
 col1, col2, col3, col4 = st.columns(4)
@@ -107,35 +76,28 @@ col2.metric(
     "Ø Recency (Tage)",
     (pd.to_datetime("today") - pd.to_datetime(df["last_contact"]))
     .dt.days.mean()
-    .round(1),
+    .round(0),
 )
-col3.metric("Ø Frequency (Tage)", df["frequency"].mean().round(1))
-col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(2))
+col3.metric("Ø Frequency (Tage)", df["frequency"].mean().round(0))
+col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(0))
 
 # Customer Lifetime Value
-st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-st.markdown(
-    '<div class="summary-text">Der Customer Lifetime Value (CLV) zeigt, wie wertvoll einzelne Fans für den Verein sind. So können gezielt VIP-Angebote oder Treueaktionen entwickelt werden.</div>',
-    unsafe_allow_html=True,
-)
-st.subheader("Customer Lifetime Value (CLV)")
+with st.container():
+    st.subheader("Customer Lifetime Value (CLV)")
+    st.markdown("""
+        Der Customer Lifetime Value (CLV) zeigt, wie wertvoll einzelne Fans für den Verein sind. 
+        So können gezielt VIP-Angebote oder Treueaktionen entwickelt werden.
+    """)
 st.bar_chart(
     df.set_index("name")["clv"].sort_values(ascending=False).head(20),
     color=SCR_HELLBLAU,
 )
-st.markdown("</div>", unsafe_allow_html=True)
-st.subheader("Customer Lifetime Value (CLV)")
-st.bar_chart(
-    df.set_index("name")["clv"].sort_values(ascending=False).head(20),
-    color=SCR_HELLBLAU,
-)
-st.markdown("</div>", unsafe_allow_html=True)
 
 # Segmente
-st.markdown('<div class="chart-container">', unsafe_allow_html=True)
 st.markdown(
-    '<div class="summary-text">Fan-Segmente helfen, gezielte Kampagnen für verschiedene Gruppen zu erstellen – z.B. Eventbesucher, Online-Shopper oder Social-Media-Fans.</div>',
-    unsafe_allow_html=True,
+    """Fan-Segmente helfen, gezielte Kampagnen für verschiedene Gruppen zu erstellen 
+    – z.B. Eventbesucher, Online-Shopper oder Social-Media-Fans.
+    """
 )
 st.subheader("Fan-Segmente")
 segments_flat = [seg for seglist in df["segments"] for seg in seglist]
@@ -145,10 +107,10 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # Touchpoints Visualisierung
 st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-st.markdown(
-    '<div class="summary-text">Die Übersicht der digitalen Touchpoints zeigt, welche Kanäle am meisten genutzt werden und wo Potenzial für mehr Interaktion liegt.</div>',
-    unsafe_allow_html=True,
-)
+st.markdown("""
+    Die Übersicht der digitalen Touchpoints zeigt, welche Kanäle am meisten genutzt werden 
+    und wo Potenzial für mehr Interaktion liegt.
+""")
 st.subheader("Touchpoints & Interaktionen")
 touchpoints = {
     "Social Media Interaktionen": df["social_media_interactions"].sum(),
@@ -179,13 +141,10 @@ if segment_filter:
     st.dataframe(df[mask].reset_index(drop=True))
 
 st.markdown(
-    f"""
-    ---
-    <span style="color:{SCR_WEISS}; font-size:0.95rem;">
-    <b>Quellen:</b><br>
-    - <a href="https://www.scriessersee.de/" style="color:{SCR_HELLBLAU};" target="_blank">SCR Homepage</a><br>
-    - Google Analytics, Ticketshop Eventim, Merchandise Shop Woocommerce, Social Media, Newsletter, Saisonkalender
-    </span>
+    """
+    - [SCR Homepage](https://www.scriessersee.de/)
+    - Google Analytics, Ticketshop Eventim, Merchandise Shop Woocommerce, 
+    - Social Media Kanäle, Newsletter 
+    - Saisonkalender
     """,
-    unsafe_allow_html=True,
 )
