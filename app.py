@@ -5,7 +5,6 @@ from collections import Counter
 from pathlib import Path
 import os
 
-st.set_page_config(layout="wide")
 
 SCR_DUNKELBLAU = "#202A44"
 SCR_HELLBLAU = "#009FE3"
