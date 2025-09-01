@@ -71,14 +71,12 @@ df = pd.DataFrame(fans)
 
 # KPIs
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("Anzahl Fans", len(df))
+col1.metric("Anzahl Fans", int(len(df)))
 col2.metric(
     "Ø Recency (Tage)",
-    (pd.to_datetime("today") - pd.to_datetime(df["last_contact"]))
-    .dt.days.mean()
-    .round(0),
+    int((pd.to_datetime("today") - pd.to_datetime(df["last_contact"])).dt.days.mean()),
 )
-col3.metric("Ø Frequency (Tage)", df["frequency"].mean().round(0))
+col3.metric("Ø Frequency (Tage)", int(df["frequency"].mean()))
 col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(0))
 
 # Customer Lifetime Value
