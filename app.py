@@ -82,63 +82,57 @@ col3.metric("Ø Frequency (Tage)", df["frequency"].mean().round(0))
 col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(0))
 
 # Customer Lifetime Value
-with st.container():
+with st.container(border=True):
     st.subheader("Customer Lifetime Value (CLV)")
     st.markdown("""
         Der Customer Lifetime Value (CLV) zeigt, wie wertvoll einzelne Fans für den Verein sind. 
         So können gezielt VIP-Angebote oder Treueaktionen entwickelt werden.
     """)
-st.bar_chart(
-    df.set_index("name")["clv"].sort_values(ascending=False).head(20),
-    color=SCR_HELLBLAU,
-)
+    st.bar_chart(
+        df.set_index("name")["clv"].sort_values(ascending=False).head(20),
+        color=SCR_HELLBLAU,
+    )
 
 # Segmente
-st.markdown(
-    """Fan-Segmente helfen, gezielte Kampagnen für verschiedene Gruppen zu erstellen 
-    – z.B. Eventbesucher, Online-Shopper oder Social-Media-Fans.
-    """
-)
-st.subheader("Fan-Segmente")
-segments_flat = [seg for seglist in df["segments"] for seg in seglist]
-segment_counts = Counter(segments_flat)
-st.bar_chart(pd.Series(segment_counts), color=SCR_HELLBLAU)
-st.markdown("</div>", unsafe_allow_html=True)
+with st.container(border=True):
+    st.subheader("Fan-Segmente")
+    st.markdown(
+        """Fan-Segmente helfen, gezielte Kampagnen für verschiedene Gruppen zu erstellen 
+        – z.B. Eventbesucher, Online-Shopper oder Social-Media-Fans.
+        """
+    )
+    segments_flat = [seg for seglist in df["segments"] for seg in seglist]
+    segment_counts = Counter(segments_flat)
+    st.bar_chart(pd.Series(segment_counts), color=SCR_HELLBLAU)
 
 # Touchpoints Visualisierung
-st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-st.markdown("""
-    Die Übersicht der digitalen Touchpoints zeigt, welche Kanäle am meisten genutzt werden 
-    und wo Potenzial für mehr Interaktion liegt.
-""")
-st.subheader("Touchpoints & Interaktionen")
-touchpoints = {
-    "Social Media Interaktionen": df["social_media_interactions"].sum(),
-    "Newsletter Abonnenten": df["newsletter"].sum(),
-    "Käufe (Frequency)": df["frequency"].sum(),
-}
-st.bar_chart(pd.Series(touchpoints), color=SCR_HELLBLAU)
-st.markdown("</div>", unsafe_allow_html=True)
+with st.container(border=True):
+    st.subheader("Touchpoints & Interaktionen"
+    st.markdown("""
+        Die Übersicht der digitalen Touchpoints zeigt, welche Kanäle am meisten genutzt werden 
+        und wo Potenzial für mehr Interaktion liegt.
+    """)
+    touchpoints = {
+        "Social Media Interaktionen": df["social_media_interactions"].sum(),
+        "Newsletter Abonnenten": df["newsletter"].sum(),
+        "Käufe (Frequency)": df["frequency"].sum(),
+    }
+    st.bar_chart(pd.Series(touchpoints), color=SCR_HELLBLAU)
 
 # Zufriedenheit
-st.subheader("Fan-Zufriedenheit")
-st.line_chart(
-    df.sort_values("satisfaction")["satisfaction"].reset_index(drop=True),
-    color=SCR_HELLBLAU,
-)
+with st.container(border=True):
+    st.subheader("Fan-Zufriedenheit")
+    st.line_chart(
+        df.sort_values("satisfaction")["satisfaction"].reset_index(drop=True),
+        color=SCR_HELLBLAU,
+    )
 
 # Filter & Detailansicht
-st.subheader("Fan-Details")
-fan_select = st.selectbox("Wähle einen Fan", df["name"])
-fan_data = df[df["name"] == fan_select].iloc[0]
-st.json(fan_data.to_dict())
-
-# Segment-Filter
-st.subheader("Segment-Analyse")
-segment_filter = st.multiselect("Segment auswählen", options=segment_counts.keys())
-if segment_filter:
-    mask = df["segments"].apply(lambda segs: any(s in segs for s in segment_filter))
-    st.dataframe(df[mask].reset_index(drop=True))
+with st.container(border=True):
+    st.subheader("Fan-Details")
+    fan_select = st.selectbox("Wähle einen Fan", df["name"])
+    fan_data = df[df["name"] == fan_select].iloc[0]
+    st.json(fan_data.to_dict())
 
 st.markdown(
     """
