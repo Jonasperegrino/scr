@@ -78,6 +78,28 @@ with open("fans_data.json", "r") as f:
 
 df = pd.DataFrame(fans)
 
+# Add custom CSS for chart containers
+st.markdown(
+    """
+    <style>
+    .chart-container {
+        background: #22305a;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .summary-text {
+        color: #fff;
+        font-size: 1.05rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # KPIs
 col1, col2, col3, col4 = st.columns(4)
 col1.metric("Anzahl Fans", len(df))
@@ -91,19 +113,36 @@ col3.metric("Ø Frequency", df["frequency"].mean().round(1))
 col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(2))
 
 # Customer Lifetime Value
+st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+st.markdown(
+    '<div class="summary-text">Der Customer Lifetime Value (CLV) zeigt, wie wertvoll einzelne Fans für den Verein sind. So können gezielt VIP-Angebote oder Treueaktionen entwickelt werden.</div>',
+    unsafe_allow_html=True,
+)
 st.subheader("Customer Lifetime Value (CLV)")
 st.bar_chart(
     df.set_index("name")["clv"].sort_values(ascending=False).head(20),
     color=SCR_HELLBLAU,
 )
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Segmente
+st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+st.markdown(
+    '<div class="summary-text">Fan-Segmente helfen, gezielte Kampagnen für verschiedene Gruppen zu erstellen – z.B. Eventbesucher, Online-Shopper oder Social-Media-Fans.</div>',
+    unsafe_allow_html=True,
+)
 st.subheader("Fan-Segmente")
 segments_flat = [seg for seglist in df["segments"] for seg in seglist]
 segment_counts = Counter(segments_flat)
 st.bar_chart(pd.Series(segment_counts), color=SCR_HELLBLAU)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Touchpoints Visualisierung
+st.markdown('<div class="chart-container">', unsafe_allow_html=True)
+st.markdown(
+    '<div class="summary-text">Die Übersicht der digitalen Touchpoints zeigt, welche Kanäle am meisten genutzt werden und wo Potenzial für mehr Interaktion liegt.</div>',
+    unsafe_allow_html=True,
+)
 st.subheader("Touchpoints & Interaktionen")
 touchpoints = {
     "Social Media Interaktionen": df["social_media_interactions"].sum(),
@@ -111,6 +150,7 @@ touchpoints = {
     "Käufe (Frequency)": df["frequency"].sum(),
 }
 st.bar_chart(pd.Series(touchpoints), color=SCR_HELLBLAU)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Zufriedenheit
 st.subheader("Fan-Zufriedenheit")
