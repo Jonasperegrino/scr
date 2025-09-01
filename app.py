@@ -109,7 +109,7 @@ col2.metric(
     .dt.days.mean()
     .round(1),
 )
-col3.metric("Ø Frequency", df["frequency"].mean().round(1))
+col3.metric("Ø Frequency (Tage)", df["frequency"].mean().round(1))
 col4.metric("Ø Umsatz (€)", df["monetary"].mean().round(2))
 
 # Customer Lifetime Value
@@ -118,6 +118,12 @@ st.markdown(
     '<div class="summary-text">Der Customer Lifetime Value (CLV) zeigt, wie wertvoll einzelne Fans für den Verein sind. So können gezielt VIP-Angebote oder Treueaktionen entwickelt werden.</div>',
     unsafe_allow_html=True,
 )
+st.subheader("Customer Lifetime Value (CLV)")
+st.bar_chart(
+    df.set_index("name")["clv"].sort_values(ascending=False).head(20),
+    color=SCR_HELLBLAU,
+)
+st.markdown("</div>", unsafe_allow_html=True)
 st.subheader("Customer Lifetime Value (CLV)")
 st.bar_chart(
     df.set_index("name")["clv"].sort_values(ascending=False).head(20),
